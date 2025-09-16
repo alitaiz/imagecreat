@@ -53,7 +53,7 @@ const handleApiResponse = (
         throw new Error(errorMessage);
     }
     
-    const textFeedback = response.text?.trim();
+    const textFeedback = (response.text ?? '').trim();
     const errorMessage = `The AI model did not return an image for the ${context}. ` + 
         (textFeedback 
             ? `The model responded with text: "${textFeedback}"`
@@ -137,7 +137,7 @@ export const suggestTextForImage = async (imageFile: File): Promise<string[]> =>
         }
     });
 
-    const jsonText = response.text.trim();
+    const jsonText = (response.text ?? '').trim();
     const result = JSON.parse(jsonText);
     if (!result.suggestions) {
         throw new Error('AI did not return suggestions in the expected format.');
@@ -185,7 +185,7 @@ User-provided info: "${productInfo || 'None'}"`;
         }
     });
 
-    const jsonText = response.text.trim();
+    const jsonText = (response.text ?? '').trim();
     const result = JSON.parse(jsonText);
     if (!result.description || !result.ideas) {
         throw new Error('AI did not return ideas in the expected format.');
@@ -215,7 +215,7 @@ Instructions: Create a detailed paragraph describing the scene. Include details 
         contents: prompt
     });
 
-    const detailedPrompt = response.text.trim();
+    const detailedPrompt = (response.text ?? '').trim();
     console.log('Generated detailed prompt:', detailedPrompt);
     return detailedPrompt;
 };

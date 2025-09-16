@@ -9,12 +9,13 @@ import type { ComponentLayer } from './InteractiveText';
 interface InteractiveComponentProps {
   data: ComponentLayer;
   onUpdate: (newData: ComponentLayer) => void;
-  imageRef: HTMLImageElement;
+  imageRef: HTMLImageElement | null;
   isActive: boolean;
   onSelect: () => void;
 }
 
-const getRenderedImageGeometry = (imageElement: HTMLImageElement) => {
+const getRenderedImageGeometry = (imageElement: HTMLImageElement | null) => {
+    if (!imageElement) return null;
     const { naturalWidth, naturalHeight, clientWidth, clientHeight } = imageElement;
     const naturalAspectRatio = naturalWidth / naturalHeight;
     const clientAspectRatio = clientWidth / clientHeight;

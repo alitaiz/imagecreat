@@ -58,7 +58,7 @@ const App: React.FC = () => {
 
 
   const displayedImage = history[historyIndex] || null;
-  const activeComponent = componentLayers.find(c => c.id === activeComponentId);
+  const activeComponent = componentLayers.find(c => c.id === activeComponentId) || null;
 
   const handleReset = () => {
     setOriginalImage(null);
