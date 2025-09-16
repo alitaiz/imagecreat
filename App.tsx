@@ -12,7 +12,6 @@ import LifestylePanel from './components/LifestylePanel';
 import TextPanel from './components/TextPanel';
 import RatioPanel from './components/RatioPanel';
 import ComponentPanel from './components/ComponentPanel';
-// FIX: ComponentLayer is exported from 'InteractiveText.tsx', not 'InteractiveComponent.tsx'.
 import InteractiveText, { ActiveText, ComponentLayer } from './components/InteractiveText';
 import InteractiveComponent from './components/InteractiveComponent';
 import { generateAdjustedImage, suggestTextForImage } from './services/geminiService';

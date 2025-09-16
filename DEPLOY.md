@@ -1,6 +1,6 @@
 # Deployment Guide: AI Photo Editor on Ubuntu 22.04
 
-This guide provides step-by-step instructions for deploying the AI Photo Editor application to a VPS running Ubuntu 22.04, served by Nginx on port `4003`.
+This guide provides step-by-step instructions for deploying your AI Photo Editor application from GitHub to a VPS running Ubuntu 22.04, served by Nginx on port `4003`.
 
 ## Prerequisites
 
@@ -40,6 +40,7 @@ We need Node.js to build the project. Installing it via NVM (Node Version Manage
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 
 # Load NVM into the current shell session
+# You may need to close and reopen your terminal for this to take effect
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
@@ -54,7 +55,7 @@ nvm use --lts
 
 ### 4. Install Git
 
-We'll use Git to get the project files onto the server.
+We'll use Git to clone the project from your GitHub repository.
 
 ```bash
 sudo apt install git -y
@@ -65,25 +66,24 @@ sudo apt install git -y
 
 Now, we'll get the application code, install dependencies, and build it for production.
 
-### 1. Get the Project Files
+### 1. Clone the Project from GitHub
 
-Clone your project's repository. If you don't have a repository, you can upload the project files using `scp`. We'll assume you're cloning from Git.
+Navigate to your home directory and clone the project from your repository.
 
 ```bash
-# Navigate to your home directory (or any other location)
 cd ~
+git clone https://github.com/alitaiz/imagecreat.git
+```
 
-# Create a directory for the project
-mkdir photo-editor && cd photo-editor
+This will create a new directory named `imagecreat`. Navigate into it.
 
-# You can now upload your project files to this directory
-# using an SCP client (like FileZilla or the command line)
-# or by cloning from a Git repository.
+```bash
+cd imagecreat
 ```
 
 ### 2. Install Dependencies
 
-Once your files are on the server, install the required Node.js packages defined in `package.json`.
+Inside the `imagecreat` directory, install the required Node.js packages defined in `package.json`.
 
 ```bash
 npm install
@@ -99,7 +99,7 @@ The project uses Vite to bundle the code for production. The Gemini API key must
 API_KEY="your_gemini_api_key_here" npm run build
 ```
 
-This command compiles the application into a `dist` directory. The contents of this directory are static and ready to be served.
+This command compiles the application into a `dist` directory inside your project folder. The contents of this directory are static and ready to be served.
 
 ---
 
@@ -107,7 +107,17 @@ This command compiles the application into a `dist` directory. The contents of t
 
 We will configure Nginx to serve the built application on port `4003`.
 
-### 1. Create a New Nginx Configuration File
+### 1. Find Your Project's Full Path
+
+Before creating the Nginx config, you need the full path to your project's `dist` folder. While inside the `imagecreat` directory, run the `pwd` command:
+
+```bash
+pwd
+```
+
+The output will be something like `/home/your_user/imagecreat`. Note this down. The full path to your application's files will be this path with `/dist` appended (e.g., `/home/your_user/imagecreat/dist`).
+
+### 2. Create a New Nginx Configuration File
 
 Use a text editor like `nano` to create a new server block configuration.
 
@@ -115,9 +125,9 @@ Use a text editor like `nano` to create a new server block configuration.
 sudo nano /etc/nginx/sites-available/photo-editor
 ```
 
-### 2. Add the Server Configuration
+### 3. Add the Server Configuration
 
-Paste the following configuration into the file. **Remember to replace `/home/your_user/photo-editor` with the actual, full path to your project's directory.**
+Paste the following configuration into the file. **Remember to replace `/home/your_user/imagecreat/dist` with the actual, full path you found in the previous step.**
 
 ```nginx
 server {
@@ -125,7 +135,7 @@ server {
     listen [::]:4003;
 
     # Replace with the actual path to your project's dist folder
-    root /home/your_user/photo-editor/dist;
+    root /var/www/imagecreat/dist;
     index index.html;
 
     server_name 74.208.102.216 _;
@@ -143,7 +153,7 @@ server {
 
 Save the file and exit (`Ctrl+X`, then `Y`, then `Enter`).
 
-### 3. Enable the New Site
+### 4. Enable the New Site
 
 Create a symbolic link from the `sites-available` directory to the `sites-enabled` directory to activate the configuration.
 
@@ -151,7 +161,7 @@ Create a symbolic link from the `sites-available` directory to the `sites-enable
 sudo ln -s /etc/nginx/sites-available/photo-editor /etc/nginx/sites-enabled/
 ```
 
-### 4. Test and Restart Nginx
+### 5. Test and Restart Nginx
 
 First, test the Nginx configuration for any syntax errors.
 

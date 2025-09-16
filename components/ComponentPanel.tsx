@@ -5,7 +5,6 @@
 
 import React from 'react';
 import { UploadIcon, TrashIcon } from './icons';
-// FIX: ComponentLayer is exported from 'InteractiveText', not 'InteractiveComponent'.
 import type { ComponentLayer } from './InteractiveText';
 
 interface ComponentPanelProps {
